@@ -17,14 +17,14 @@ export type Alignment =
   | 'Lawful Good' | 'Neutral Good' | 'Chaotic Good'
   | 'Lawful Neutral' | 'True Neutral' | 'Chaotic Neutral'
   | 'Lawful Evil' | 'Neutral Evil' | 'Chaotic Evil'
-  | 'Unaligned'; // Para bestias, según SRD 5.2
+  | 'Unaligned';
 
 // --- CHARACTER STATS ---
 
 export interface AbilityScore {
-  base: number;      // El valor numérico (ej: 15)
-  modifier: number;  // El cálculo derivado (ej: +2)
-  savingThrow: boolean; // ¿Tiene competencia?
+  base: number;
+  modifier: number;
+  savingThrow: boolean;
 }
 
 export interface StatsBlock {
@@ -36,7 +36,7 @@ export interface StatsBlock {
   CHA: AbilityScore;
 }
 
-// --- RACE & CLASS DEFINITIONS (Blueprint del SRD) ---
+// --- RACE & CLASS DEFINITIONS ---
 
 export interface RacialTrait {
   id: string;
@@ -46,44 +46,42 @@ export interface RacialTrait {
 
 export interface Race {
   id: string;
-  name: string;      // ej: "Human", "Elf"
-  speed: number;     // en pies (ft)
+  name: string;
+  speed: number;
   size: Size;
-  abilityBonuses: Partial<Record<Ability, number>>; // ej: { DEX: 2, INT: 1 }
+  abilityBonuses: Partial<Record<Ability, number>>;
   traits: RacialTrait[];
 }
 
 export interface ClassFeature {
   id: string;
   name: string;
-  level: number;     // Nivel al que se desbloquea
+  level: number;
   description: string;
 }
 
 export interface CharacterClass {
   id: string;
-  name: string;      // ej: "Fighter", "Wizard"
-  hitDie: DiceType;  // Dado de golpe
-  primaryAbility: Ability[]; // Para cálculo de multiclass/recomendaciones
-  savingThrows: Ability[];   // Competencias de salvación
-  features: ClassFeature[];  // Features del nivel 1 al 20
+  name: string;
+  hitDie: DiceType;
+  primaryAbility: Ability[];
+  savingThrows: Ability[];
+  features: ClassFeature[];
 }
 
-// --- THE CHARACTER ENTITY (Lo que guardaremos en Dexie) ---
+// --- THE CHARACTER ENTITY ---
 
 export interface Character {
-  id?: number; // Dexie ID (auto-increment)
+  id?: number;
   name: string;
   level: number;
   xp: number;
   
-  // Origins
   raceId: string;
   classId: string;
   backgroundId: string;
   alignment: Alignment;
 
-  // Stats
   stats: StatsBlock;
   hp: {
     current: number;
@@ -91,7 +89,7 @@ export interface Character {
     temp: number;
   };
   
-  inventory: string[]; // TODO: Definir interfaz de Items más adelante
+  inventory: string[];
   createdAt: Date;
   updatedAt: Date;
 }
