@@ -28,8 +28,9 @@ interface CharacterState {
 
   // Acciones
   setName: (name: string) => void;
-  setRace: (raceId: string) => void;   // <--- ¡AQUÍ ESTÁ LA CLAVE!
+  setRace: (raceId: string) => void;
   setClass: (classId: string) => void;
+  setBackground: (bgId: string) => void;
   updateStat: (ability: Ability, value: number) => boolean;
   setStep: (step: number) => void;
   resetCharacter: () => void;
@@ -61,6 +62,11 @@ export const useCharacterStore = create<CharacterState>()(
         setClass: (classId) => 
           set((state) => ({ 
             character: { ...state.character, classId } 
+          })),
+
+          setBackground: (backgroundId) => 
+          set((state) => ({ 
+            character: { ...state.character, backgroundId } 
           })),
 
         setStep: (step) =>

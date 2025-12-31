@@ -2,6 +2,7 @@ import { useCharacterStore } from '@/features/character-creator/store/characterS
 import { StatRoller } from '@/features/character-creator/components/StatRoller';
 import { RaceSelector } from '@/features/character-creator/components/RaceSelector';
 import { ClassSelector } from '@/features/character-creator/components/ClassSelector';
+import { BackgroundSelector } from '@/features/character-creator/components/BackgroundSelector';
 import { cn } from '@/lib/utils';
 import { ChevronRight, ChevronLeft, Terminal } from 'lucide-react';
 import { useEffect } from 'react';
@@ -14,7 +15,8 @@ function App() {
 
   const STEPS = [
     { title: "Especie", component: <RaceSelector /> },
-    { title: "Clase", component: <ClassSelector /> }, // <--- Nuevo paso insertado
+    { title: "Trasfondo", component: <BackgroundSelector /> },
+    { title: "Clase", component: <ClassSelector /> },
     { title: "Atributos", component: <StatRoller /> },
   ];
 
@@ -35,7 +37,8 @@ function App() {
   // Validación para avanzar
   const canAdvance = () => {
     if (safeIndex === 0) return !!character.raceId;  // Requiere Raza
-    if (safeIndex === 1) return !!character.classId; // Requiere Clase (Nuevo)
+    if (safeIndex === 1) return !!character.backgroundId;
+    if (safeIndex === 2) return !!character.classId; // Requiere Clase
     return true; // Stats siempre ok
   };
 
