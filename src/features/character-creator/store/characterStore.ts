@@ -2,109 +2,117 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import type { Character, StatsBlock, Ability } from '@/types/dnd';
 
-// --- UTILS (Lógica de negocio pura) ---
-// Fórmula SRD: (Score - 10) / 2, redondeado hacia abajo
+// --- UTILS ---
 export const calculateModifier = (score: number): number => {
   return Math.floor((score - 10) / 2);
 };
 
-const initialStats: StatsBlock = {
-  STR: { base: 10, modifier: 0, savingThrow: false },
-  DEX: { base: 10, modifier: 0, savingThrow: false },
-  CON: { base: 10, modifier: 0, savingThrow: false },
-  INT: { base: 10, modifier: 0, savingThrow: false },
-  WIS: { base: 10, modifier: 0, savingThrow: false },
-  CHA: { base: 10, modifier: 0, savingThrow: false },
+const POINT_COST: Record<number, number> = {
+  8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9
 };
 
-// --- STORE INTERFACE ---
+const initialStats: StatsBlock = {
+  STR: { base: 8, modifier: -1, savingThrow: false },
+  DEX: { base: 8, modifier: -1, savingThrow: false },
+  CON: { base: 8, modifier: -1, savingThrow: false },
+  INT: { base: 8, modifier: -1, savingThrow: false },
+  WIS: { base: 8, modifier: -1, savingThrow: false },
+  CHA: { base: 8, modifier: -1, savingThrow: false },
+};
+
 interface CharacterState {
-  // El personaje en borrador
+  // Estado
   character: Partial<Character>;
-  
-  // UI State (¿En qué paso del wizard estamos?)
+  availablePoints: number;
   currentStep: number;
-  
-  // Actions
+
+  // Acciones
   setName: (name: string) => void;
-  setRace: (raceId: string) => void;
+  setRace: (raceId: string) => void;   // <--- ¡AQUÍ ESTÁ LA CLAVE!
   setClass: (classId: string) => void;
-  updateStat: (ability: Ability, value: number) => void;
-  toggleSavingThrow: (ability: Ability) => void;
+  updateStat: (ability: Ability, value: number) => boolean;
+  setStep: (step: number) => void;
   resetCharacter: () => void;
 }
 
-// --- STORE IMPLEMENTATION ---
 export const useCharacterStore = create<CharacterState>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         character: {
           name: '',
           level: 1,
           stats: initialStats,
           hp: { current: 0, max: 0, temp: 0 },
         },
+        availablePoints: 27,
         currentStep: 0,
 
         setName: (name) => 
-          set((state) => ({ 
-            character: { ...state.character, name } 
-          })),
+          set((state) => ({ character: { ...state.character, name } })),
 
+        // Restauramos esta función perdida
         setRace: (raceId) => 
           set((state) => ({ 
             character: { ...state.character, raceId } 
           })),
 
+        // Y esta también, para el futuro
         setClass: (classId) => 
           set((state) => ({ 
             character: { ...state.character, classId } 
           })),
 
-        // LA MAGIA: Actualiza base Y modificador automáticamente
-        updateStat: (ability, value) =>
-          set((state) => {
-            if (!state.character.stats) return state;
+        setStep: (step) =>
+          set({ currentStep: step }),
 
-            const newStats = { ...state.character.stats };
-            newStats[ability] = {
-              ...newStats[ability],
-              base: value,
-              modifier: calculateModifier(value),
-            };
+        updateStat: (ability, newValue) => {
+          const state = get();
+          const currentStats = state.character.stats;
+          if (!currentStats) return false;
 
-            return {
-              character: { ...state.character, stats: newStats },
-            };
-          }),
+          const currentValue = currentStats[ability].base;
 
-        toggleSavingThrow: (ability) =>
-          set((state) => {
-             if (!state.character.stats) return state;
-             
-             const newStats = { ...state.character.stats };
-             newStats[ability] = {
-               ...newStats[ability],
-               savingThrow: !newStats[ability].savingThrow
-             };
-             
-             return { character: { ...state.character, stats: newStats } };
-          }),
+          // 1. Validar rangos (8-15)
+          if (newValue < 8 || newValue > 15) return false;
+
+          // 2. Calcular costo
+          const currentCost = POINT_COST[currentValue];
+          const newCost = POINT_COST[newValue];
+          const costDiff = newCost - currentCost;
+
+          // 3. Verificar presupuesto
+          if (state.availablePoints - costDiff < 0) return false;
+
+          // 4. Aplicar
+          const newStats = { ...currentStats };
+          newStats[ability] = {
+            ...newStats[ability],
+            base: newValue,
+            modifier: calculateModifier(newValue),
+          };
+
+          set({
+            character: { ...state.character, stats: newStats },
+            availablePoints: state.availablePoints - costDiff,
+          });
+
+          return true;
+        },
 
         resetCharacter: () => 
           set({ 
             character: { 
               name: '', 
               level: 1, 
-              stats: initialStats,
-              hp: { current: 0, max: 0, temp: 0 } 
+              stats: initialStats, 
             },
-            currentStep: 0 
+            availablePoints: 27,
+            currentStep: 0
           }),
       }),
-      {
-        name: 'quest-vault-draft', // Nombre en LocalStorage
+      { 
+        name: 'quest-vault-v1', // Mantenemos la versión v1
       }
     )
   )

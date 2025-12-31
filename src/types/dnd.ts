@@ -1,5 +1,4 @@
 // --- CORE MECHANICS ---
-
 export type Ability = 'STR' | 'DEX' | 'CON' | 'INT' | 'WIS' | 'CHA';
 
 export type Skill = 
@@ -20,7 +19,6 @@ export type Alignment =
   | 'Unaligned';
 
 // --- CHARACTER STATS ---
-
 export interface AbilityScore {
   base: number;
   modifier: number;
@@ -37,7 +35,6 @@ export interface StatsBlock {
 }
 
 // --- RACE & CLASS DEFINITIONS ---
-
 export interface RacialTrait {
   id: string;
   name: string;
@@ -70,7 +67,6 @@ export interface CharacterClass {
 }
 
 // --- THE CHARACTER ENTITY ---
-
 export interface Character {
   id?: number;
   name: string;
