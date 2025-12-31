@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { useCharacterStore, calculateModifier } from '../store/characterStore';
+import { saveCharacterToDb } from '@/db/db';
 import { PLAYABLE_RACES } from '@/srd/races';
 import { PLAYABLE_CLASSES } from '@/srd/classes';
 import { PLAYABLE_BACKGROUNDS } from '@/srd/backgrounds';
 import { cn } from '@/lib/utils';
-import { Heart, Shield, Swords, Save } from 'lucide-react';
+import { Heart, Shield, Swords, Save, Loader2 } from 'lucide-react';
 
 export const CharacterSummary = () => {
-  const { character, setName } = useCharacterStore();
+  const { character, setName, resetCharacter } = useCharacterStore();
+  const [isSaving, setIsSaving] = useState(false);
 
   // 1. Resolver IDs a Objetos Reales
   const race = PLAYABLE_RACES.find(r => r.id === character.raceId);
@@ -20,14 +23,47 @@ export const CharacterSummary = () => {
     return base + bonus;
   };
 
-  const getMod = (ability: keyof typeof character.stats) => {
-    return calculateModifier(getScore(ability));
-  };
+  const getMod = (ability: keyof typeof character.stats) => calculateModifier(getScore(ability));
 
   // 3. Calcular HP Inicial (Nivel 1 = Max Dado + CON Mod)
   const hitDieValue = cls ? parseInt(cls.hitDie.replace('d', '')) : 8;
   const conMod = getMod('CON');
   const maxHP = Math.max(1, hitDieValue + conMod); // Mínimo 1 HP siempre
+
+  const handleSave = async () => {
+    if (!character.name) {
+      alert("¡Tu héroe necesita un nombre!");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      // Preparamos el objeto final con los HP calculados
+      const finalCharacter = {
+        ...character,
+        hp: {
+          current: maxHP,
+          max: maxHP,
+          temp: 0
+        },
+        // Aquí podríamos guardar los stats ya sumados si quisiéramos, 
+        // pero mejor guardar la base y recalcular dinámicamente siempre.
+      };
+
+      await saveCharacterToDb(finalCharacter);
+      
+      // Éxito
+      alert("¡Personaje Guardado en la Bóveda!");
+      resetCharacter(); // Limpia el formulario para el siguiente
+      // AQUÍ: En el futuro redirigiremos al Dashboard
+      
+    } catch (error) {
+      console.error("Error al guardar:", error);
+      alert("Hubo un error al escribir en el pergamino mágico (DB Error).");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -151,10 +187,23 @@ export const CharacterSummary = () => {
       </div>
 
       {/* BOTÓN FINAL */}
-      <div className="flex justify-end pt-4">
-        <button className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-primary/20 flex items-center gap-3 transition-transform active:scale-95">
-          <Save className="w-5 h-5" />
-          Guardar Personaje
+      <div className="flex justify-end pt-4 pb-8">
+        <button 
+          onClick={handleSave}
+          disabled={isSaving || !character.name}
+          className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-primary/20 flex items-center gap-3 transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Guardando...
+            </>
+          ) : (
+            <>
+              <Save className="w-5 h-5" />
+              Guardar Personaje
+            </>
+          )}
         </button>
       </div>
 
