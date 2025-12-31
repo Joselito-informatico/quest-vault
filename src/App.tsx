@@ -3,6 +3,7 @@ import { StatRoller } from '@/features/character-creator/components/StatRoller';
 import { RaceSelector } from '@/features/character-creator/components/RaceSelector';
 import { ClassSelector } from '@/features/character-creator/components/ClassSelector';
 import { BackgroundSelector } from '@/features/character-creator/components/BackgroundSelector';
+import { CharacterSummary } from '@/features/character-creator/components/CharacterSummary';
 import { cn } from '@/lib/utils';
 import { ChevronRight, ChevronLeft, Terminal } from 'lucide-react';
 import { useEffect } from 'react';
@@ -18,6 +19,7 @@ function App() {
     { title: "Trasfondo", component: <BackgroundSelector /> },
     { title: "Clase", component: <ClassSelector /> },
     { title: "Atributos", component: <StatRoller /> },
+    { title: "Resumen", component: <CharacterSummary /> },
   ];
 
   // --- SAFETY GUARD ---
@@ -36,10 +38,12 @@ function App() {
 
   // Validación para avanzar
   const canAdvance = () => {
-    if (safeIndex === 0) return !!character.raceId;  // Requiere Raza
+    if (safeIndex === 0) return !!character.raceId;
     if (safeIndex === 1) return !!character.backgroundId;
-    if (safeIndex === 2) return !!character.classId; // Requiere Clase
-    return true; // Stats siempre ok
+    if (safeIndex === 2) return !!character.classId;
+    // El paso 3 (Stats) siempre es válido
+    // El paso 4 (Resumen) es el final, no hay "siguiente"
+    return true;
   };
 
   return (
