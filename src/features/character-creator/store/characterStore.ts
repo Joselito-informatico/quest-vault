@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import type { Character, StatsBlock, Ability } from '../../../types/dnd';
+import type { Character, StatsBlock, Ability } from '@/types/dnd';
 
 // --- UTILS (Lógica de negocio pura) ---
 // Fórmula SRD: (Score - 10) / 2, redondeado hacia abajo

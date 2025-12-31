@@ -1,6 +1,6 @@
 import { useCharacterStore, calculateModifier } from '../store/characterStore';
-import type { Ability } from '../../../types/dnd';
-import { cn } from '../../../lib/utils';
+import type { Ability } from '@/types/dnd';
+import { cn } from '@/lib/utils';
 import { Minus, Plus, ShieldAlert } from 'lucide-react';
 
 const ABILITIES: { key: Ability; label: string }[] = [
