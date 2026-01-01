@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# QuestVault 🛡️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Companion App offline-first para jugadores de D&D 5e (SRD 5.2)**
+> *Construido con arquitectura moderna, tipado estricto y UX de videojuego.*
 
-Currently, two official plugins are available:
+![Project Status](https://img.shields.io/badge/Status-MVP%20Complete-success)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![Tech](https://img.shields.io/badge/Stack-React%20%7C%20TypeScript%20%7C%20Vite%20%7C%20Zustand-orange)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Características (MVP)
 
-## React Compiler
+### 🧙‍♂️ Creador de Personajes (Wizard)
+- **Flujo Guiado:** Especie -> Trasfondo -> Clase -> Atributos.
+- **Reglas SRD 5.2:** Implementación estricta de reglas (Bonos de Atributo por Trasfondo, no por Raza).
+- **Sistema Point Buy:** Validador matemático de compra de puntos (27 puntos, tope 15).
+- **Cálculo Automático:** HP, AC y Modificadores calculados en tiempo real.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 📜 Hoja de Personaje Interactiva
+- **Persistencia Local:** Base de datos `IndexedDB` (vía Dexie.js) para guardar múltiples héroes.
+- **Gestión de Salud:** Barra de HP animada con controles rápidos de daño/cura.
+- **Dice Roller 3D (Simulado):** Motor de tiradas con animaciones, detección de Críticos/Pifias y desglose matemático.
+- **Dashboard:** Panel de control para gestionar tu roster de personajes.
 
-## Expanding the ESLint configuration
+## 🛠️ Stack Tecnológico
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* **Core:** React 18 + Vite
+* **Lenguaje:** TypeScript (Strict Mode)
+* **Estilos:** Tailwind CSS (Mobile First)
+* **Estado:** Zustand (con Persistencia en LocalStorage para borradores)
+* **Base de Datos:** Dexie.js (IndexedDB Wrapper)
+* **Iconos:** Lucide React
+* **Build Mobile:** Capacitor (Listo para configuración nativa)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Instalación y Uso
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [https://github.com/Joselito-informatico/quest-vault.git](https://github.com/Joselito-informatico/quest-vault.git)
+    cd quest-vault
+    ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3.  **Iniciar servidor de desarrollo:**
+    ```bash
+    npm run dev
+    ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🗺️ Roadmap
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- [x] Motor de Reglas Core (Stats, Razas, Clases)
+- [x] Base de Datos Local
+- [x] Lanzador de Dados
+- [ ] **Fase 2:** Inventario y Gestión de Peso
+- [ ] **Fase 3:** Grimorio de Hechizos (Filtros por Nivel/Clase)
+- [ ] **Fase 4:** Exportar a PDF / JSON
+- [ ] **Fase 5:** PWA Install & Deploy
+
+## ⚖️ Legal
+
+This work includes material from the System Reference Document 5.2.1 ("SRD 5.2.1") by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License.
+
+---
+*Desarrollado con pasión y código limpio.*
